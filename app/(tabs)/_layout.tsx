@@ -3,7 +3,7 @@ import { Text, View } from 'react-native'
 
 const _layout = () => {
   return (
-    <View>
+    <View  style={{alignItems: 'center', justifyContent: 'center', paddingTop: 50}}>
       <Text>_layout</Text>
     </View>
   )
