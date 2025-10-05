@@ -7,6 +7,7 @@ export default function _layout() {
     <ThemeProvider >
       <Stack screenOptions={{headerShown: false}}>
         <Stack.Screen name='index'/>
+        <Stack.Screen name='(routes)/onboarding/index'/>
       </Stack>
     </ThemeProvider>
   )
