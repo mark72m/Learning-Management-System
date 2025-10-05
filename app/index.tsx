@@ -1,24 +1,29 @@
+import { Redirect } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
 
-const index = () => {
-    const [loggedInUser, setloggedInUser] = useState(true);
+export default function index() {
+    const [loggedInUser, setloggedInUser] = useState(false);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const subscription = async () => {
             const token = SecureStore.getItem("accessToken");
+            console.log(token);
             setloggedInUser(token ? true : false);
+            setLoading(false);
         }
         subscription();
         
     }, []);
   return (
-    <View>
-      <Text>index</Text>
-    </View>
+    <>
+    {loading ? (
+        <></>
+    ) : (
+        <Redirect href={!loggedInUser ? "/(routes)/onboarding" : "/(tabs)"}/>
+    )}
+    </>
   )
 }
 
-export default index
