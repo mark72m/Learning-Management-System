@@ -1,8 +1,9 @@
-import { HEIGHT, MIN_Ledge } from '@/configs/constants';
+import { HEIGHT, LEFT_SNAP_POINTS, MARGIN_WIDTH, MIN_LEDGE, NEXT, PREV, RIGHT_SNAP_POINTS, WIDTH } from '@/configs/constants';
 import React, { JSX } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useSharedValue } from 'react-native-reanimated';
-import { useVector } from 'react-native-redash';
+import { Gesture } from 'react-native-gesture-handler';
+import { runOnJS, useSharedValue, withSpring } from 'react-native-reanimated';
+import { snapPoint, useVector } from 'react-native-redash';
 import { Side } from './wave';
 
 interface SliderProps {
@@ -22,14 +23,75 @@ export default function Slider({
   next,
   setIndex,
 } : SliderProps ){
-
+   
+  // 95578434 ..852
   const hasPrev = !!prev;
   const hasNext = !!next;
-  const zindex = useSharedValue(0);
+  const zIndex = useSharedValue(0);
   const activeSide = useSharedValue(Side.NONE);
   const isTransitionLeft = useSharedValue(false);
   const isTransitionRight = useSharedValue(false);
-  const left = useVector(MIN_Ledge, HEIGHT / 2);
+  const left = useVector(MIN_LEDGE, HEIGHT / 2);
+  const right = useVector(MIN_LEDGE, HEIGHT / 2);
+
+  const pandGesture = Gesture.Pan().onStart(({x}) => {
+    if (x <= MARGIN_WIDTH && hasPrev){
+      (activeSide.value = Side.LEFT), (zIndex.value = 100);
+    } else if ( x >= WIDTH - MARGIN_WIDTH && hasNext){
+      activeSide.value = Side.RIGHT;
+    } else {
+      activeSide.value = Side.NONE;
+
+    }
+  }).onUpdate(({x,y}) => {
+    if(activeSide.value === Side.LEFT) {
+      left.x.value = Math.max(x, MARGIN_WIDTH);
+      left.y.value = y;
+    } else if (activeSide.value === Side.RIGHT){
+      right.x.value = Math.max(WIDTH - x, MARGIN_WIDTH)
+    }
+  }).onEnd(({x, velocityX, velocityY}) => {
+    if(activeSide.value === Side.LEFT){
+      const dest = snapPoint(x, velocityX, LEFT_SNAP_POINTS );
+      isTransitionLeft.value = dest === PREV;
+      left.x.value = withSpring(
+        dest,
+        {
+          velocity: velocityX,
+          overshootClamping: isTransitionLeft.value ? true : false,
+          restSpeedThreshold: isTransitionLeft.value ? 100 : 0.01,
+          restDisplacementThreshold: isTransitionLeft.value ? 100 : 0.01,
+        },
+        () => {
+          if(isTransitionLeft.value){
+            runOnJS(setIndex)(index - 1);
+          } else {
+            zIndex.value = 0;
+            activeSide.value = Side.NONE;
+          }
+        }
+      );
+      left.y.value = withSpring(HEIGHT / 2, {velocity: velocityY});
+    } else if(activeSide.value === Side.RIGHT){
+      const dest = snapPoint(x, velocityX, RIGHT_SNAP_POINTS);
+      isTransitionRight.value = dest === NEXT;
+      right.x.value = withSpring(
+        WIDTH - dest,
+        {
+          velocity: velocityX,
+          overshootClamping: isTransitionRight.value ? true : false,
+          restSpeedThreshold: isTransitionRight.value ? 100 : 0.01,
+          restDisplacementThreshold: isTransitionRight.value ? 100 : 0.01,
+        }), () => {
+          if(isTransitionRight.value){
+            runOnJS(setIndex)(index + 1);
+          } else {
+            activeSide.value = Side.NONE;
+          }
+        }
+
+    }
+  })
 
   return (
     <View>
