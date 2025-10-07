@@ -1,8 +1,8 @@
 import { HEIGHT, LEFT_SNAP_POINTS, MARGIN_WIDTH, MIN_LEDGE, NEXT, PREV, RIGHT_SNAP_POINTS, WIDTH } from '@/configs/constants';
-import React, { JSX } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Gesture } from 'react-native-gesture-handler';
-import { runOnJS, useSharedValue, withSpring } from 'react-native-reanimated';
+import React, { JSX, useEffect } from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { snapPoint, useVector } from 'react-native-redash';
 import { Side } from './wave';
 
@@ -82,21 +82,45 @@ export default function Slider({
           overshootClamping: isTransitionRight.value ? true : false,
           restSpeedThreshold: isTransitionRight.value ? 100 : 0.01,
           restDisplacementThreshold: isTransitionRight.value ? 100 : 0.01,
-        }), () => {
+        }, () => {
           if(isTransitionRight.value){
             runOnJS(setIndex)(index + 1);
           } else {
             activeSide.value = Side.NONE;
-          }
+          }        
         }
-
+      );
+      right.y.value = withSpring(HEIGHT / 2, {velocity: velocityY});
     }
-  })
+  });
+
+  const leftStyle = useAnimatedStyle(() => ({
+    zIndex: zIndex.value,
+  }));
+
+  useEffect(() => {
+    if(Platform.OS === 'ios'){
+      right.x.value = withSpring(WIDTH * 0.167);
+    } else {
+      right.x.value = withSpring(WIDTH * 0.185);
+    }
+  }, [left, right])
 
   return (
-    <View>
-      <Text>slider</Text>
-    </View>
+    <GestureDetector gesture={pandGesture}>
+      <Animated.View style={StyleSheet.absoluteFill}>
+        {current}
+        {
+          prev && (
+            <Animated.View style={[StyleSheet.absoluteFill, leftStyle]}>
+              </Animated.View>
+          )
+        }
+        {
+          next && <View style={StyleSheet.absoluteFill}></View>
+        }
+      </Animated.View>
+    </GestureDetector>
   )
 }
 
