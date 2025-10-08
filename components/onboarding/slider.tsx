@@ -1,10 +1,10 @@
-import { HEIGHT, LEFT_SNAP_POINTS, MARGIN_WIDTH, MIN_LEDGE, NEXT, PREV, RIGHT_SNAP_POINTS, WIDTH } from '@/configs/constants';
+import { HEIGHT, LEFT_SNAP_POINTS, MARGIN_WIDTH, MIN_LEDGE, NEXT, PREV, RIGHT_SNAP_POINTS, Side, WIDTH } from '@/configs/constants';
 import React, { JSX, useEffect } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { snapPoint, useVector } from 'react-native-redash';
-import { Side } from './wave';
+//import { Side } from './wave';
 
 interface SliderProps {
   index: number;
