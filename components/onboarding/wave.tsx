@@ -14,10 +14,10 @@ interface WaveProps {
   children: React.ReactElement;
   position: Vector<SharedValue<number>>;
   isTransitioning: SharedValue<boolean>;
-  
+
 }
-export default function Wave({side, children, position, isTransitioning } : WaveProps) {
-  const R =  useDerivedValue(() => {
+export default function Wave({ side, children, position, isTransitioning }: WaveProps) {
+  const R = useDerivedValue(() => {
     const value = Math.min(position.x.value - MIN_LEDGE, WIDTH / 2.5);
     return value > 0 ? value : MIN_LEDGE;
   });
@@ -25,7 +25,7 @@ export default function Wave({side, children, position, isTransitioning } : Wave
   const ledge = useDerivedValue(() => {
     const baseLedge = Math.max(0, position.x.value - MIN_LEDGE - R.value);
     return withSpring(isTransitioning.value ? position.x.value : baseLedge, {
-      stiffness : 200,
+      stiffness: 200,
     });
   });
 
@@ -36,12 +36,12 @@ export default function Wave({side, children, position, isTransitioning } : Wave
 
     // Safeguard each point calculation pto avoid NaN
     const p1x = ledge.value;
-    const p1y = position.y.value - 2 *stepY;
+    const p1y = position.y.value - 2 * stepY;
 
     const p2x = p1x + stepX;
     const p2y = p1y + stepY;
 
-    const p3x = p2x  + stepX;
+    const p3x = p2x + stepX;
     const p3y = p2y + stepY;
 
     const p4x = p3x - stepX;
@@ -70,37 +70,37 @@ export default function Wave({side, children, position, isTransitioning } : Wave
 
   const maskElement = (
     <Svg
-    style={[StyleSheet.absoluteFill, {
-      transform: [{rotateY: side === Side.RIGHT ? "180deg" : "0deg"}],
-    }
-  ]}>
-    <AnimatedPath 
-    fill = {      
-      Platform.OS === 'android' 
-    ? children.props.slide.color 
-    : children.props.color
-    }
-    
-    animatedProps={animatedProps}
-    />
-  </Svg>
+      style={[StyleSheet.absoluteFill, {
+        transform: [{ rotateY: side === Side.RIGHT ? "180deg" : "0deg" }],
+      }
+      ]}>
+      <AnimatedPath
+        fill={
+          Platform.OS === 'android'
+            ? children.props.slide.color
+            : children.props.color
+        }
+
+        animatedProps={animatedProps}
+      />
+    </Svg>
   );
 
   const androidStyle = useAnimatedStyle(() => {
     return {
       transform: [
         {
-          translateX: isTransitioning.value 
-          ? withTiming(0) 
-          : side === Side.RIGHT 
-          ? WIDTH - ledge.value 
-          : -WIDTH + ledge.value,
+          translateX: isTransitioning.value
+            ? withTiming(0)
+            : side === Side.RIGHT
+              ? WIDTH - ledge.value
+              : -WIDTH + ledge.value,
         },
       ],
     };
   });
 
-  if(Platform.OS === 'android') {
+  if (Platform.OS === 'android') {
     return (
       <View style={[StyleSheet.absoluteFill, androidStyle]}>
         {maskElement}
@@ -111,6 +111,11 @@ export default function Wave({side, children, position, isTransitioning } : Wave
     );
   }
   return (
-    <MaskedView></MaskedView>
+    // @ts-ignore
+    <MaskedView
+      style={StyleSheet.absoluteFill}
+      maskElement={maskElement}>
+
+    </MaskedView>
   )
 }

@@ -18,12 +18,12 @@ interface SliderProps {
 
 export default function Slider({
   index,
-  children:current,
+  children: current,
   prev,
   next,
   setIndex,
-} : SliderProps ){
-   
+}: SliderProps) {
+
   // 95578434 ..852
   const hasPrev = !!prev;
   const hasNext = !!next;
@@ -34,25 +34,25 @@ export default function Slider({
   const left = useVector(MIN_LEDGE, HEIGHT / 2);
   const right = useVector(MIN_LEDGE, HEIGHT / 2);
 
-  const pandGesture = Gesture.Pan().onStart(({x}) => {
-    if (x <= MARGIN_WIDTH && hasPrev){
+  const pandGesture = Gesture.Pan().onStart(({ x }) => {
+    if (x <= MARGIN_WIDTH && hasPrev) {
       (activeSide.value = Side.LEFT), (zIndex.value = 100);
-    } else if ( x >= WIDTH - MARGIN_WIDTH && hasNext){
+    } else if (x >= WIDTH - MARGIN_WIDTH && hasNext) {
       activeSide.value = Side.RIGHT;
     } else {
       activeSide.value = Side.NONE;
 
     }
-  }).onUpdate(({x,y}) => {
-    if(activeSide.value === Side.LEFT) {
+  }).onUpdate(({ x, y }) => {
+    if (activeSide.value === Side.LEFT) {
       left.x.value = Math.max(x, MARGIN_WIDTH);
       left.y.value = y;
-    } else if (activeSide.value === Side.RIGHT){
+    } else if (activeSide.value === Side.RIGHT) {
       right.x.value = Math.max(WIDTH - x, MARGIN_WIDTH)
     }
-  }).onEnd(({x, velocityX, velocityY}) => {
-    if(activeSide.value === Side.LEFT){
-      const dest = snapPoint(x, velocityX, LEFT_SNAP_POINTS );
+  }).onEnd(({ x, velocityX, velocityY }) => {
+    if (activeSide.value === Side.LEFT) {
+      const dest = snapPoint(x, velocityX, LEFT_SNAP_POINTS);
       isTransitionLeft.value = dest === PREV;
       left.x.value = withSpring(
         dest,
@@ -63,7 +63,7 @@ export default function Slider({
           restDisplacementThreshold: isTransitionLeft.value ? 100 : 0.01,
         },
         () => {
-          if(isTransitionLeft.value){
+          if (isTransitionLeft.value) {
             runOnJS(setIndex)(index - 1);
           } else {
             zIndex.value = 0;
@@ -71,8 +71,8 @@ export default function Slider({
           }
         }
       );
-      left.y.value = withSpring(HEIGHT / 2, {velocity: velocityY});
-    } else if(activeSide.value === Side.RIGHT){
+      left.y.value = withSpring(HEIGHT / 2, { velocity: velocityY });
+    } else if (activeSide.value === Side.RIGHT) {
       const dest = snapPoint(x, velocityX, RIGHT_SNAP_POINTS);
       isTransitionRight.value = dest === NEXT;
       right.x.value = withSpring(
@@ -83,14 +83,14 @@ export default function Slider({
           restSpeedThreshold: isTransitionRight.value ? 100 : 0.01,
           restDisplacementThreshold: isTransitionRight.value ? 100 : 0.01,
         }, () => {
-          if(isTransitionRight.value){
+          if (isTransitionRight.value) {
             runOnJS(setIndex)(index + 1);
           } else {
             activeSide.value = Side.NONE;
-          }        
+          }
         }
       );
-      right.y.value = withSpring(HEIGHT / 2, {velocity: velocityY});
+      right.y.value = withSpring(HEIGHT / 2, { velocity: velocityY });
     }
   });
 
@@ -99,7 +99,7 @@ export default function Slider({
   }));
 
   useEffect(() => {
-    if(Platform.OS === 'ios'){
+    if (Platform.OS === 'ios') {
       right.x.value = withSpring(WIDTH * 0.167);
     } else {
       right.x.value = withSpring(WIDTH * 0.185);
@@ -113,7 +113,7 @@ export default function Slider({
         {
           prev && (
             <Animated.View style={[StyleSheet.absoluteFill, leftStyle]}>
-              </Animated.View>
+            </Animated.View>
           )
         }
         {

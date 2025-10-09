@@ -6,20 +6,27 @@ import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function OnboardingScreen() {
-    const [ index, setIndex] = useState(0);
-    const prev = onBoardingSlides[index - 1];
-    const next = onBoardingSlides[index + 1];
+  const [index, setIndex] = useState(0);
+  const prev = onBoardingSlides[index - 1];
+  const next = onBoardingSlides[index + 1];
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-        <Slider
+      <Slider
         key={index}
         index={index}
         setIndex={setIndex}
-        prev = {prev && <Slide slide={prev} totalSlides = {onBoardingSlides.length}/>}
-        next = {next && <Slide slide={next} totalSlides = {onBoardingSlides.length}/>}>
+        prev={prev && <Slide slide={prev} totalSlides={onBoardingSlides.length} />}
+        next={next && <Slide slide={next} totalSlides={onBoardingSlides.length} />}>
+      </Slider>
 
-        </Slider>
-    </GestureHandlerRootView>   
+      <Slide 
+      slide = {onBoardingSlides[index]}
+      index = {index}
+      setIndex = {setIndex}
+      totalSlides = {onBoardingSlides.length}/>
+
+
+    </GestureHandlerRootView>
   )
 }
 
