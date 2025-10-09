@@ -1,7 +1,8 @@
 import { HEIGHT, MIN_LEDGE, Side, WIDTH } from '@/configs/constants';
+import MaskedView from "@react-native-community/masked-view";
 import React from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
-import Animated, { SharedValue, useAnimatedProps, useDerivedValue, withSpring } from 'react-native-reanimated';
+import { Platform, StyleSheet, View } from 'react-native';
+import Animated, { SharedValue, useAnimatedProps, useAnimatedStyle, useDerivedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { Vector } from 'react-native-redash';
 import Svg, { Path } from 'react-native-svg';
 
@@ -74,12 +75,42 @@ export default function Wave({side, children, position, isTransitioning } : Wave
     }
   ]}>
     <AnimatedPath 
-    fill = {Platform.OS === 'android' ? children.props.slide.color : children.props.color}/>
+    fill = {      
+      Platform.OS === 'android' 
+    ? children.props.slide.color 
+    : children.props.color
+    }
+    
+    animatedProps={animatedProps}
+    />
   </Svg>
-  )
+  );
+
+  const androidStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: isTransitioning.value 
+          ? withTiming(0) 
+          : side === Side.RIGHT 
+          ? WIDTH - ledge.value 
+          : -WIDTH + ledge.value,
+        },
+      ],
+    };
+  });
+
+  if(Platform.OS === 'android') {
+    return (
+      <View style={[StyleSheet.absoluteFill, androidStyle]}>
+        {maskElement}
+        <Animated.View>
+          {children}
+        </Animated.View>
+      </View>
+    );
+  }
   return (
-    <View>
-      <Text>Wave</Text>
-    </View>
+    <MaskedView></MaskedView>
   )
 }
