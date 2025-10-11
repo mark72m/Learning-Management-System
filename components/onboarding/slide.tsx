@@ -1,6 +1,7 @@
 import { HEIGHT, WIDTH } from '@/configs/constants';
+import { fontSizes, SCREEN_WIDTH } from '@/themes/app.constants';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { scale, verticalScale } from 'react-native-size-matters';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 
@@ -27,10 +28,42 @@ export default function Slide({ slide, index, setIndex, totalSlides }: {
           fill="url(#gradient)" />
       </Svg>
       <View style={styles.container}>
+        <View>{slide.image}</View>
         <View>
-          {slide.image}
+          <View style={{ width: SCREEN_WIDTH * 1, paddingHorizontal: verticalScale(25) }}>
+            <Text
+              style={{
+                fontSize: fontSizes.FONT30,
+                fontWeight: '600',
+                color: "#05030D",
+                fontFamily: "Poppins-600SemiBold",
+              }}>
+                {slide.title}
+              </Text>
+
+              <Text
+              style={{
+                fontSize: fontSizes.FONT30,
+                fontWeight: '600',
+                color: "#05030D",
+                fontFamily: "Poppins-600SemiBold",
+              }}>
+                {slide.secondTitle}
+              </Text>
+
+              <Text
+              style={{
+                paddingVertical: verticalScale(4),
+                fontSize: fontSizes.FONT18,
+                color: "#05030D",
+                fontFamily: "Poppins-300Light",
+              }}>
+                {slide.subtitle}
+              </Text>
+          </View>
         </View>
       </View>
+
 
     </>
   );
