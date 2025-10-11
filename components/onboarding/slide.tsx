@@ -1,12 +1,18 @@
 import { HEIGHT, WIDTH } from '@/configs/constants';
 import { fontSizes, SCREEN_WIDTH, windowHeight, windowWidth } from '@/themes/app.constants';
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { scale, verticalScale } from 'react-native-size-matters';
+import { Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 
-export default function Slide({ slide, index, setIndex, totalSlides }: {
+export default function Slide({
+  slide,
+  index,
+  setIndex,
+  totalSlides
+}: {
   slide: onBoardingSlidesTypes;
   index: number;
   setIndex: (value: number) => void;
@@ -14,15 +20,15 @@ export default function Slide({ slide, index, setIndex, totalSlides }: {
 }) {
 
   const [ModalVisible, setModalVisible] = useState(false);
-  const handlePress = ( 
-    index: number, setIndex: (index: number) => void ) => {
-    if(index === 2){
+  const handlePress = (
+    index: number, setIndex: (index: number) => void) => {
+    if (index === 2) {
       setModalVisible(true);
     } else {
       setIndex(index + 1);
-    } 
-  } 
-  
+    }
+  }
+
   return (
     <>
       <Svg style={StyleSheet.absoluteFill}>
@@ -33,11 +39,11 @@ export default function Slide({ slide, index, setIndex, totalSlides }: {
           </RadialGradient>
         </Defs>
         <Rect
-          x="0"
-          y="0"
+          x={0}
+          y={0}
           width={WIDTH}
           height={HEIGHT}
-          fill="url(#gradient)" />
+          fill={"url(#gradient)"} />
       </Svg>
       <View style={styles.container}>
         <View>{slide.image}</View>
@@ -99,10 +105,17 @@ export default function Slide({ slide, index, setIndex, totalSlides }: {
               height: "100%",
             }}
             onPress={() => handlePress(index, setIndex)}
-            >
+          >
             <Text style={styles.nextButtonText}>Next</Text>
           </Pressable>
         </LinearGradient>
+      )}
+
+      {index < totalSlides -1 && (
+        <TouchableOpacity style={styles.arrowButton}>
+          <Ionicons />
+
+        </TouchableOpacity>
       )}
 
 
@@ -159,5 +172,19 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: fontSizes.FONT22,
     fontWeight: "bold"
+  },
+
+  arrowButton: {
+    position: "absolute",
+    width: scale(30),
+    height: scale(30),
+    borderRadius: scale(20),
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+    right: moderateScale(5),
+    top: Platform.OS === "ios" ? verticalScale(345) : verticalScale(385),
+    transform: [{ translateY: -30 }],
   },
 })

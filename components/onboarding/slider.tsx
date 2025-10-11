@@ -4,6 +4,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { snapPoint, useVector } from 'react-native-redash';
+import Wave from './wave';
 //import { Side } from './wave';
 
 interface SliderProps {
@@ -113,11 +114,22 @@ export default function Slider({
         {
           prev && (
             <Animated.View style={[StyleSheet.absoluteFill, leftStyle]}>
+              <Wave
+                side={Side.LEFT}
+                position={left}
+                isTransitioning={isTransitionLeft}>
+                {prev}</Wave>
             </Animated.View>
           )
         }
         {
-          next && <View style={StyleSheet.absoluteFill}></View>
+          next && <View style={StyleSheet.absoluteFill}>
+            <Wave
+              side={Side.RIGHT}
+              position={right}
+              isTransitioning={isTransitionRight}>
+              {next}</Wave>
+          </View>
         }
       </Animated.View>
     </GestureDetector>
