@@ -16,7 +16,12 @@ interface WaveProps {
   isTransitioning: SharedValue<boolean>;
 
 }
-export default function Wave({ side, children, position, isTransitioning }: WaveProps) {
+export default function Wave({ 
+  side, 
+  children, 
+  position, 
+  isTransitioning 
+}: WaveProps) {
   const R = useDerivedValue(() => {
     const value = Math.min(position.x.value - MIN_LEDGE, WIDTH / 2.5);
     return value > 0 ? value : MIN_LEDGE;
